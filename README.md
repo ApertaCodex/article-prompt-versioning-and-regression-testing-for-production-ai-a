@@ -2,7 +2,7 @@
 
 > Originally published on [omnithium.ai](https://omnithium.ai/blog/prompt-versioning-regression-testing)
 
-AI agents in production face a critical challenge: how to safely evolve prompts without introducing subtle behavioral regressions that compromise quality, [compliance](/blog/ai-agent-governance-enterprise-guide), or user experience. Unlike traditional code changes, prompt modifications can cause unpredictable downstream effects that are difficult to detect through conventional testing methods.
+AI agents in production face a critical challenge: how to safely evolve prompts without introducing subtle behavioral regressions that compromise quality, [compliance](https://omnithium.ai/blog/ai-agent-governance-enterprise-guide.html), or user experience. Unlike traditional code changes, prompt modifications can cause unpredictable downstream effects that are difficult to detect through conventional testing methods.
 
 This guide covers enterprise-grade practices for prompt versioning and regression testing, treating prompts as first-class code artifacts with proper CI/CD integration, semantic testing frameworks, and robust rollback capabilities.
 
@@ -12,10 +12,10 @@ Traditional software testing focuses on deterministic behavior, given input X, w
 
 **Non-deterministic outputs:** The same prompt can produce different but equally valid responses
 **Semantic equivalence:** Responses may use different wording but convey identical meaning
-**Context sensitivity:** Prompt performance depends on [conversation history](/blog/memory-context-management-agents), user context, and external data
+**Context sensitivity:** Prompt performance depends on [conversation history](https://omnithium.ai/blog/memory-context-management-agents.html), user context, and external data
 **Multi-modal outputs:** Modern agents return structured data, tool calls, and reasoning chains, not just text
 
-A 1% performance regression across millions of agent interactions translates to significant [business impact](/blog/measuring-ai-agent-roi), decreased customer satisfaction, increased escalations to human agents, or compliance violations.
+A 1% performance regression across millions of agent interactions translates to significant [business impact](https://omnithium.ai/blog/measuring-ai-agent-roi.html), decreased customer satisfaction, increased escalations to human agents, or compliance violations.
 
 ## Prompt Versioning: Treating Prompts as Code
 
@@ -29,24 +29,24 @@ Store prompts in version control alongside your agent codebase:
 # prompts/customer-support/refund-request/v2.1.3.yaml
 version: "2.1.3"
 prompt: |
-  You are a customer support agent for Acme Corp. Your role is to handle refund requests according to policy.
+ You are a customer support agent for Acme Corp. Your role is to handle refund requests according to policy.
 
-  Policy constraints:
-  - Maximum refund: $500 without manager approval
-  - Eligible period: purchases within last 90 days
-  - Required documentation: order ID and reason
+ Policy constraints:
+ - Maximum refund: $500 without manager approval
+ - Eligible period: purchases within last 90 days
+ - Required documentation: order ID and reason
 
-  If the request meets policy criteria, proceed with refund process.
-  If outside policy, escalate to human agent with detailed reasoning.
+ If the request meets policy criteria, proceed with refund process.
+ If outside policy, escalate to human agent with detailed reasoning.
 
-  Current conversation: {{conversation_history}}
+ Current conversation: {{conversation_history}}
 metadata:
-  author: "alice@acme.com"
-  created: "2026-05-10T14:32:00Z"
-  tests: ["refund-happy-path", "refund-boundary-case", "refund-policy-violation"]
-  dependencies:
-    - "policy-engine:v1.2.0"
-    - "customer-db-connector:v3.1.0"
+ author: "alice@acme.com"
+ created: "2026-05-10T14:32:00Z"
+ tests: ["refund-happy-path", "refund-boundary-case", "refund-policy-violation"]
+ dependencies:
+ - "policy-engine:v1.2.0"
+ - "customer-db-connector:v3.1.0"
 ```
 
 ### Semantic Versioning for Prompts
@@ -64,12 +64,12 @@ Track cross-prompt dependencies and external system versions to prevent incompat
 ```python
 # prompt_dependency_check.py
 def validate_prompt_dependencies(prompt_version, environment):
-    """Validate all dependencies are compatible"""
-    dependencies = prompt_version.metadata.get('dependencies', [])
+ """Validate all dependencies are compatible"""
+ dependencies = prompt_version.metadata.get('dependencies', [])
 
-    for dep in dependencies:
-        if not is_compatible(dep, environment.current_versions):
-            raise DependencyError(f"Incompatible dependency: {dep}")
+ for dep in dependencies:
+ if not is_compatible(dep, environment.current_versions):
+ raise DependencyError(f"Incompatible dependency: {dep}")
 ```
 
 ## Building Golden Datasets for Regression Testing
@@ -88,42 +88,42 @@ Build test cases that cover:
 ```python
 # tests/prompts/golden_datasets/customer_refund.json
 {
-  "test_cases": [
-    {
-      "id": "refund-happy-path-1",
-      "input": {
-        "user_query": "I'd like to return my recent purchase, order #12345",
-        "conversation_history": [],
-        "user_context": {
-          "lifetime_value": 2500,
-          "previous_refunds": 1
-        }
-      },
-      "expected_behavior": {
-        "action": "process_refund",
-        "parameters": {
-          "max_amount": 500,
-          "require_approval": false
-        },
-        "response_contains": ["processing your refund", "order #12345"]
-      }
-    },
-    {
-      "id": "refund-boundary-case-1",
-      "input": {
-        "user_query": "I need a refund for my $495 purchase from 89 days ago",
-        "conversation_history": [],
-        "user_context": {
-          "lifetime_value": 100,
-          "previous_refunds": 3
-        }
-      },
-      "expected_behavior": {
-        "action": "escalate_to_human",
-        "reason_contains": ["policy review", "manager approval"]
-      }
-    }
-  ]
+ "test_cases": [
+ {
+ "id": "refund-happy-path-1",
+ "input": {
+ "user_query": "I'd like to return my recent purchase, order #12345",
+ "conversation_history": [],
+ "user_context": {
+ "lifetime_value": 2500,
+ "previous_refunds": 1
+ }
+ },
+ "expected_behavior": {
+ "action": "process_refund",
+ "parameters": {
+ "max_amount": 500,
+ "require_approval": false
+ },
+ "response_contains": ["processing your refund", "order #12345"]
+ }
+ },
+ {
+ "id": "refund-boundary-case-1",
+ "input": {
+ "user_query": "I need a refund for my $495 purchase from 89 days ago",
+ "conversation_history": [],
+ "user_context": {
+ "lifetime_value": 100,
+ "previous_refunds": 3
+ }
+ },
+ "expected_behavior": {
+ "action": "escalate_to_human",
+ "reason_contains": ["policy review", "manager approval"]
+ }
+ }
+ ]
 }
 ```
 
@@ -145,20 +145,20 @@ Traditional string matching fails for prompt testing. You need semantic evaluati
 ```python
 # evaluation/metrics.py
 class PromptEvaluator:
-    def evaluate_response(self, expected, actual, context):
-        return {
-            "semantic_similarity": self._calculate_semantic_similarity(expected, actual),
-            "action_correctness": self._check_actions(expected, actual),
-            "safety_score": self._safety_evaluation(actual),
-            "compliance_check": self._compliance_validation(actual, context),
-            "hallucination_detection": self._detect_hallucinations(actual, context)
-        }
+ def evaluate_response(self, expected, actual, context):
+ return {
+ "semantic_similarity": self._calculate_semantic_similarity(expected, actual),
+ "action_correctness": self._check_actions(expected, actual),
+ "safety_score": self._safety_evaluation(actual),
+ "compliance_check": self._compliance_validation(actual, context),
+ "hallucination_detection": self._detect_hallucinations(actual, context)
+ }
 
-    def _calculate_semantic_similarity(self, expected, actual):
-        # Use embedding-based similarity rather than exact match
-        expected_embedding = get_embedding(expected)
-        actual_embedding = get_embedding(actual)
-        return cosine_similarity(expected_embedding, actual_embedding)
+ def _calculate_semantic_similarity(self, expected, actual):
+ # Use embedding-based similarity rather than exact match
+ expected_embedding = get_embedding(expected)
+ actual_embedding = get_embedding(actual)
+ return cosine_similarity(expected_embedding, actual_embedding)
 ```
 
 ### Confidence Thresholds and Scoring
@@ -168,18 +168,18 @@ Establish pass/fail criteria based on your quality requirements:
 ```yaml
 # evaluation/thresholds.yaml
 acceptance_criteria:
-  semantic_similarity:
-    min_score: 0.85
-    warning_threshold: 0.90
-  action_correctness:
-    required: true
-    tolerance: 0.0
-  safety_score:
-    min_score: 0.95
-  compliance_check:
-    required: true
-  hallucination_detection:
-    max_score: 0.1
+ semantic_similarity:
+ min_score: 0.85
+ warning_threshold: 0.90
+ action_correctness:
+ required: true
+ tolerance: 0.0
+ safety_score:
+ min_score: 0.95
+ compliance_check:
+ required: true
+ hallucination_detection:
+ max_score: 0.1
 ```
 
 ## CI/CD Integration for Prompt Testing
@@ -191,19 +191,19 @@ Integrate prompt testing into your existing CI/CD pipelines to prevent regressio
 ```yaml
 # .pre-commit-config.yaml
 repos:
-  - repo: local
-    hooks:
-      - id: prompt-validation
-        name: Prompt syntax validation
-        entry: python scripts/validate_prompt_syntax.py
-        files: \.yaml$|\.yml$
-        language: system
+ - repo: local
+ hooks:
+ - id: prompt-validation
+ name: Prompt syntax validation
+ entry: python scripts/validate_prompt_syntax.py
+ files: \.yaml$|\.yml$
+ language: system
 
-      - id: prompt-testing
-        name: Run prompt regression tests
-        entry: python scripts/run_prompt_tests.py --changed-prompts
-        language: system
-        require_serial: true
+ - id: prompt-testing
+ name: Run prompt regression tests
+ entry: python scripts/run_prompt_tests.py --changed-prompts
+ language: system
+ require_serial: true
 ```
 
 ### GitHub Actions Pipeline Example
@@ -213,42 +213,42 @@ repos:
 name: Prompt Regression Testing
 
 on:
-  push:
-    paths:
-      - "prompts/**"
-      - "tests/prompts/**"
+ push:
+ paths:
+ - "prompts/**"
+ - "tests/prompts/**"
 
 jobs:
-  prompt-tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+ prompt-tests:
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
+ - name: Setup Python
+ uses: actions/setup-python@v4
+ with:
+ python-version: "3.11"
 
-      - name: Install dependencies
-        run: pip install -r requirements-test.txt
+ - name: Install dependencies
+ run: pip install -r requirements-test.txt
 
-      - name: Identify changed prompts
-        id: changed-prompts
-        run: |
-          CHANGED=$(git diff --name-only HEAD^ HEAD -- prompts/)
-          echo "changed_prompts=${CHANGED}" >> $GITHUB_OUTPUT
+ - name: Identify changed prompts
+ id: changed-prompts
+ run: |
+ CHANGED=$(git diff --name-only HEAD^ HEAD -- prompts/)
+ echo "changed_prompts=${CHANGED}" >> $GITHUB_OUTPUT
 
-      - name: Run targeted prompt tests
-        run: |
-          python scripts/run_targeted_tests.py \
-            --prompts "${{ steps.changed-prompts.outputs.changed_prompts }}" \
-            --golden-dataset tests/prompts/golden_datasets/
+ - name: Run targeted prompt tests
+ run: |
+ python scripts/run_targeted_tests.py \
+ --prompts "${{ steps.changed-prompts.outputs.changed_prompts }}" \
+ --golden-dataset tests/prompts/golden_datasets/
 
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        with:
-          name: prompt-test-results
-          path: test-results/
+ - name: Upload test results
+ uses: actions/upload-artifact@v4
+ with:
+ name: prompt-test-results
+ path: test-results/
 ```
 
 ### Canary Deployment Strategy
@@ -258,31 +258,31 @@ Deploy prompt changes gradually with automated rollback capabilities:
 ```python
 # deployment/canary_deploy.py
 class PromptCanaryDeployer:
-    def deploy_with_canary(self, new_prompt_version, baseline_version):
-        # Phase 1: 1% traffic, monitor key metrics
-        self._deploy_to_canary(new_prompt_version, traffic_percentage=1)
+ def deploy_with_canary(self, new_prompt_version, baseline_version):
+ # Phase 1: 1% traffic, monitor key metrics
+ self._deploy_to_canary(new_prompt_version, traffic_percentage=1)
 
-        canary_metrics = self._monitor_canary_metrics(duration="1h")
-        if not self._passes_canary_check(canary_metrics, baseline_version):
-            self._rollback_canary()
-            return False
+ canary_metrics = self._monitor_canary_metrics(duration="1h")
+ if not self._passes_canary_check(canary_metrics, baseline_version):
+ self._rollback_canary()
+ return False
 
-        # Phase 2: 10% traffic, broader monitoring
-        self._increase_canary_traffic(10)
-        canary_metrics = self._monitor_canary_metrics(duration="4h")
+ # Phase 2: 10% traffic, broader monitoring
+ self._increase_canary_traffic(10)
+ canary_metrics = self._monitor_canary_metrics(duration="4h")
 
-        if not self._passes_canary_check(canary_metrics, baseline_version):
-            self._rollback_canary()
-            return False
+ if not self._passes_canary_check(canary_metrics, baseline_version):
+ self._rollback_canary()
+ return False
 
-        # Full deployment
-        self._deploy_full(new_prompt_version)
-        return True
+ # Full deployment
+ self._deploy_full(new_prompt_version)
+ return True
 
-    def _passes_canary_check(self, metrics, baseline):
-        return (metrics["success_rate"] >= baseline["success_rate"] * 0.98 and
-                metrics["customer_satisfaction"] >= baseline["customer_satisfaction"] and
-                metrics["escalation_rate"] <= baseline["escalation_rate"] * 1.05)
+ def _passes_canary_check(self, metrics, baseline):
+ return (metrics["success_rate"] >= baseline["success_rate"] * 0.98 and
+ metrics["customer_satisfaction"] >= baseline["customer_satisfaction"] and
+ metrics["escalation_rate"] <= baseline["escalation_rate"] * 1.05)
 ```
 
 ## A/B Evaluation Framework
@@ -294,80 +294,80 @@ For significant prompt changes, implement structured A/B testing to measure real
 ```python
 # evaluation/ab_testing.py
 class PromptABTest:
-    def run_experiment(self, control_version, treatment_version, sample_size=10000):
-        experiment_id = self._create_experiment(control_version, treatment_version)
+ def run_experiment(self, control_version, treatment_version, sample_size=10000):
+ experiment_id = self._create_experiment(control_version, treatment_version)
 
-        # Random assignment with stratification
-        assignments = self._assign_traffic(experiment_id, sample_size)
+ # Random assignment with stratification
+ assignments = self._assign_traffic(experiment_id, sample_size)
 
-        # Collect metrics over experiment period
-        results = self._collect_results(experiment_id, duration="7d")
+ # Collect metrics over experiment period
+ results = self._collect_results(experiment_id, duration="7d")
 
-        # Statistical analysis
-        analysis = self._analyze_results(results)
+ # Statistical analysis
+ analysis = self._analyze_results(results)
 
-        return {
-            "experiment_id": experiment_id,
-            "results": results,
-            "analysis": analysis,
-            "recommendation": self._make_recommendation(analysis)
-        }
+ return {
+ "experiment_id": experiment_id,
+ "results": results,
+ "analysis": analysis,
+ "recommendation": self._make_recommendation(analysis)
+ }
 
-    def _analyze_results(self, results):
-        return {
-            "primary_metric": self._calculate_statistical_significance(
-                results["control"]["success_rate"],
-                results["treatment"]["success_rate"],
-                results["sample_size"]
-            ),
-            "secondary_metrics": {
-                "escalation_rate": self._calculate_difference(
-                    results["control"]["escalation_rate"],
-                    results["treatment"]["escalation_rate"]
-                ),
-                "handle_time": self._calculate_difference(
-                    results["control"]["average_handle_time"],
-                    results["treatment"]["average_handle_time"]
-                )
-            }
-        }
+ def _analyze_results(self, results):
+ return {
+ "primary_metric": self._calculate_statistical_significance(
+ results["control"]["success_rate"],
+ results["treatment"]["success_rate"],
+ results["sample_size"]
+ ),
+ "secondary_metrics": {
+ "escalation_rate": self._calculate_difference(
+ results["control"]["escalation_rate"],
+ results["treatment"]["escalation_rate"]
+ ),
+ "handle_time": self._calculate_difference(
+ results["control"]["average_handle_time"],
+ results["treatment"]["average_handle_time"]
+ )
+ }
+ }
 ```
 
 ## Monitoring and Alerting for Production Prompts
 
-Production prompts require [ongoing monitoring](/blog/agent-observability-beyond-uptime) to detect drift and degradation.
+Production prompts require [ongoing monitoring](https://omnithium.ai/blog/agent-observability-beyond-uptime.html) to detect drift and degradation.
 
 ### Real-time Quality Monitoring
 
 ```python
 # monitoring/quality_monitor.py
 class PromptQualityMonitor:
-    def __init__(self):
-        self.baselines = self._load_performance_baselines()
-        self.anomaly_detector = SeasonalAnomalyDetector()
+ def __init__(self):
+ self.baselines = self._load_performance_baselines()
+ self.anomaly_detector = SeasonalAnomalyDetector()
 
-    def monitor_conversation(self, conversation_result, prompt_version):
-        quality_metrics = self._calculate_quality_metrics(conversation_result)
+ def monitor_conversation(self, conversation_result, prompt_version):
+ quality_metrics = self._calculate_quality_metrics(conversation_result)
 
-        # Check against baselines
-        deviations = self._check_against_baseline(quality_metrics, self.baselines[prompt_version])
+ # Check against baselines
+ deviations = self._check_against_baseline(quality_metrics, self.baselines[prompt_version])
 
-        # Detect anomalies
-        if self.anomaly_detector.is_anomalous(quality_metrics):
-            self._trigger_alert(f"Anomalous prompt behavior detected for {prompt_version}")
+ # Detect anomalies
+ if self.anomaly_detector.is_anomalous(quality_metrics):
+ self._trigger_alert(f"Anomalous prompt behavior detected for {prompt_version}")
 
-        # Track for trend analysis
-        self._store_metrics(quality_metrics, prompt_version)
+ # Track for trend analysis
+ self._store_metrics(quality_metrics, prompt_version)
 
-        return deviations
+ return deviations
 
-    def _calculate_quality_metrics(self, conversation_result):
-        return {
-            "semantic_coherence": self._measure_coherence(conversation_result),
-            "action_appropriateness": self._evaluate_actions(conversation_result),
-            "safety_violations": self._count_safety_issues(conversation_result),
-            "user_sentiment": conversation_result.get("user_feedback", 0.5)
-        }
+ def _calculate_quality_metrics(self, conversation_result):
+ return {
+ "semantic_coherence": self._measure_coherence(conversation_result),
+ "action_appropriateness": self._evaluate_actions(conversation_result),
+ "safety_violations": self._count_safety_issues(conversation_result),
+ "user_sentiment": conversation_result.get("user_feedback", 0.5)
+ }
 ```
 
 ### Automated Rollback Triggers
@@ -377,23 +377,23 @@ Configure automatic rollback based on key metrics:
 ```yaml
 # monitoring/rollback_rules.yaml
 rules:
-  - name: "success-rate-drop"
-    description: "Rollback if success rate drops significantly"
-    condition: "current.success_rate < baseline.success_rate * 0.9"
-    action: "rollback"
-    cooldown: "30m"
+ - name: "success-rate-drop"
+ description: "Rollback if success rate drops significantly"
+ condition: "current.success_rate < baseline.success_rate * 0.9"
+ action: "rollback"
+ cooldown: "30m"
 
-  - name: "escalation-spike"
-    description: "Rollback if escalations increase dramatically"
-    condition: "current.escalation_rate > baseline.escalation_rate * 2.0"
-    action: "rollback"
-    cooldown: "15m"
+ - name: "escalation-spike"
+ description: "Rollback if escalations increase dramatically"
+ condition: "current.escalation_rate > baseline.escalation_rate * 2.0"
+ action: "rollback"
+ cooldown: "15m"
 
-  - name: "safety-violation"
-    description: "Immediate rollback on safety violations"
-    condition: "current.safety_violations > 5"
-    action: "emergency_rollback"
-    cooldown: "0m"
+ - name: "safety-violation"
+ description: "Immediate rollback on safety violations"
+ condition: "current.safety_violations > 5"
+ action: "emergency_rollback"
+ cooldown: "0m"
 ```
 
 ## Organizational Best Practices
@@ -404,7 +404,7 @@ Establish a formal review process for prompt changes:
 
 - **Peer review:** All prompt changes require review by another prompt engineer
 - **Domain expert review:** Critical business logic changes require domain expert approval
-- **[Compliance review](/blog/eu-ai-agent-compliance):** Legal and compliance team review for regulated content
+- **[Compliance review](https://omnithium.ai/blog/eu-ai-agent-compliance.html):** Legal and compliance team review for regulated content
 - **Performance review:** Architect review for system impact and dependencies
 
 ### Prompt Catalog and Discovery
@@ -414,18 +414,18 @@ Maintain a searchable catalog of all prompts with metadata:
 ```yaml
 # prompt-catalog/metadata.yaml
 prompts:
-  - id: "customer-support-refund-request"
-    current_version: "2.1.3"
-    owner: "support-ai-team@acme.com"
-    description: "Handles customer refund requests with policy enforcement"
-    domain: "customer-support"
-    criticality: "high"
-    compliance_impact: true
-    last_tested: "2026-05-10"
-    test_coverage: 92.5
-    dependencies:
-      - "policy-engine"
-      - "customer-database"
+ - id: "customer-support-refund-request"
+ current_version: "2.1.3"
+ owner: "support-ai-team@acme.com"
+ description: "Handles customer refund requests with policy enforcement"
+ domain: "customer-support"
+ criticality: "high"
+ compliance_impact: true
+ last_tested: "2026-05-10"
+ test_coverage: 92.5
+ dependencies:
+ - "policy-engine"
+ - "customer-database"
 ```
 
 ### Training and Documentation
@@ -474,7 +474,7 @@ Track these metrics to measure your prompt testing effectiveness:
 
 Prompt versioning and regression testing are not optional for production AI agents, they're essential engineering disciplines that separate experimental prototypes from reliable production systems. By treating prompts as code, building comprehensive test suites, and integrating testing into your CI/CD pipeline, you can safely evolve your AI agents while maintaining quality and reliability.
 
-The investment in prompt testing infrastructure pays dividends in reduced production incidents, faster iteration cycles, and greater confidence in your AI agent deployments. Start with the basics of versioning and golden datasets, then progressively build out more sophisticated testing, monitoring, and deployment capabilities as your [agent maturity](/blog/ai-agent-maturity-model) grows.
+The investment in prompt testing infrastructure pays dividends in reduced production incidents, faster iteration cycles, and greater confidence in your AI agent deployments. Start with the basics of versioning and golden datasets, then progressively build out more sophisticated testing, monitoring, and deployment capabilities as your [agent maturity](https://omnithium.ai/blog/ai-agent-maturity-model.html) grows.
 
 Ready to deploy production AI agents with confidence? [Omnithium](https://omnithium.ai) provides enterprise-grade orchestration with built-in prompt versioning, testing, and observability. See [pricing](https://omnithium.ai/pricing) to get started.
 

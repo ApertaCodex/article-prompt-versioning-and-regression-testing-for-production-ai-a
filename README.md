@@ -477,19 +477,3 @@ Prompt versioning and regression testing are not optional for production AI agen
 The investment in prompt testing infrastructure pays dividends in reduced production incidents, faster iteration cycles, and greater confidence in your AI agent deployments. Start with the basics of versioning and golden datasets, then progressively build out more sophisticated testing, monitoring, and deployment capabilities as your [agent maturity](https://omnithium.ai/blog/ai-agent-maturity-model.html) grows.
 
 Ready to deploy production AI agents with confidence? [Omnithium](https://omnithium.ai) provides enterprise-grade orchestration with built-in prompt versioning, testing, and observability. See [pricing](https://omnithium.ai/pricing) to get started.
-
----
-
-*Originally published on the [Omnithium Blog](https://omnithium.ai/blog/prompt-versioning-regression-testing).*
-
-📚 Explore more articles on the [Omnithium Blog](https://omnithium.ai/blog)
-
-🚀 [Get started with Omnithium](https://omnithium.ai/signup) | [Explore the platform](https://omnithium.ai/platform/) | [Book a demo](https://omnithium.ai/demo/) | [Resources](https://omnithium.ai/resources)
-
----
-
-**[Omnithium](https://omnithium.ai)** -- the AI agent platform for enterprises.
-
-📚 [Explore the Omnithium Blog](https://omnithium.ai/blog) for more insights.
-
-🚀 [Get started](https://omnithium.ai/signup) | [Explore the platform](https://omnithium.ai/platform/) | [Book a demo](https://omnithium.ai/demo/) | [Resources](https://omnithium.ai/resources)
